@@ -80,7 +80,7 @@ pip install apify-client
 
 ## Basic CLI Usage
 
-1.  **Set API Token**: Export your Apify API token as an environment variable:
+1.  **Set API Token**: Export your [Apify API token](https://console.apify.com/settings/integrations) as an environment variable:
     ```bash
     export APIFY_API_TOKEN="your_apify_api_token_here"
     ```
