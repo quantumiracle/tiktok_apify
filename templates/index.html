@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Parser - Web Interface</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1>TikTok Parser - Web Interface</h1>
+            <p class="lead">Find TikTok influencers based on topics and extract their profile data</p>
+        </div>
+
+        <div class="form-container">
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Parser Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form id="parser-form" action="{{ url_for('parse') }}" method="post">
+                        <div class="mb-3">
+                            <label for="api_token" class="form-label">Apify API Token <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="api_token" name="api_token" required>
+                            <div class="form-text">
+                                Your Apify API token. Get it from <a href="https://console.apify.com/account/integrations" target="_blank">Apify Console</a>.
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="save_token">
+                                <label class="form-check-label" for="save_token">Save token in browser</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="topics" class="form-label">Topics (Hashtags) <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="topics" name="topics" placeholder="art, food, technology" required>
+                            <div class="form-text">
+                                Comma-separated list of topics (hashtags) to search for.
+                            </div>
+                            <div id="topic-tags" class="mt-2" style="display: none;"></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="results_per_hashtag" class="form-label">Results Per Hashtag</label>
+                                <input type="number" class="form-control" id="results_per_hashtag" name="results_per_hashtag" value="20" min="1" max="100">
+                                <div class="form-text">
+                                    Number of video results to fetch per hashtag (1-100).
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="max_profiles" class="form-label">Max Profiles Per Topic</label>
+                                <input type="number" class="form-control" id="max_profiles" name="max_profiles" value="20" min="1" max="100">
+                                <div class="form-text">
+                                    Maximum profiles to process per topic (1-100).
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="require_email" name="require_email" checked>
+                            <label class="form-check-label" for="require_email">Require Email</label>
+                            <div class="form-text">
+                                Only include profiles with email addresses in the results.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="output_format" class="form-label">Output Format</label>
+                            <select class="form-select" id="output_format" name="output_format">
+                                <option value="csv" selected>CSV</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" id="submit-button" class="btn btn-primary">Run Parser</button>
+                        </div>
+                        
+                        <!-- Loading Indicator -->
+                        <div id="loading-indicator" class="loading mt-3">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border loading-spinner text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <p class="mt-2">Processing your request. This may take a few minutes...</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">About TikTok Parser</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>This tool uses a hybrid approach with two Apify APIs:</p>
+                        <ol>
+                            <li><strong>TikTok Scraper API</strong> for topic-based searching</li>
+                            <li><strong>TikTok Profile Scraper API</strong> for detailed profile metrics</li>
+                        </ol>
+                        <p>The parser extracts the following data for each profile:</p>
+                        <ul>
+                            <li>Username</li>
+                            <li>Profile URL</li>
+                            <li>Follower Count</li>
+                            <li>Total Likes</li>
+                            <li>Following Count</li>
+                            <li>Friends Count</li>
+                            <li>Video Count</li>
+                            <li>Bio Text</li>
+                            <li>Email Address (if found)</li>
+                        </ul>
+                        <p class="mb-0"><strong>Note:</strong> Running the parser may take some time depending on the number of topics and profiles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

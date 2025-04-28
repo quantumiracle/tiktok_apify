@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Parser - Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header text-center">
+            <h1>TikTok Parser - Results</h1>
+            <p class="lead">Parsing results for topics: {{ results.topics|join(', ') }}</p>
+        </div>
+
+        <div class="results-container">
+            <!-- Flash Messages -->
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Summary Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Total Topics:</strong> {{ results.topics|length }}</p>
+                            <p><strong>Total Profiles Found:</strong> {{ results.total_profiles }}</p>
+                            <p><strong>Output Format:</strong> {{ results.output_format|upper }}</p>
+                            <p><strong>Output Directory:</strong> {{ results.output_dir }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Profiles per Topic:</h6>
+                            <ul>
+                                {% for topic, count in results.topic_results.items() %}
+                                    <li><strong>{{ topic }}:</strong> {{ count }} profiles</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Files Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Download Results</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-grid">
+                                <a href="{{ url_for('download_file', filename='all_topics.' + results.output_format) }}" class="btn btn-primary">
+                                    Download All Topics ({{ results.output_format|upper }})
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="list-group">
+                                {% for topic in results.topics %}
+                                    <a href="{{ url_for('download_file', filename='topic_' + topic + '.' + results.output_format) }}" class="list-group-item list-group-item-action">
+                                        Download {{ topic }} ({{ results.output_format|upper }})
+                                    </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Profiles -->
+            <h3 class="mb-3">Sample Profiles</h3>
+            
+            {% for topic, profiles in sample_profiles.items() %}
+                <div class="topic-section">
+                    <h4>Topic: {{ topic }}</h4>
+                    
+                    {% if profiles %}
+                        <div class="row">
+                            {% for profile in profiles %}
+                                <div class="col-md-6">
+                                    <div class="card profile-card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">{{ profile.username }}</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p><strong>Profile URL:</strong> <a href="{{ profile.profile_url }}" target="_blank">{{ profile.profile_url }}</a></p>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <p><strong>Followers:</strong> {{ profile.followers|default('N/A') }}</p>
+                                                    <p><strong>Likes:</strong> {{ profile.likes|default('N/A') }}</p>
+                                                    <p><strong>Following:</strong> {{ profile.following|default('N/A') }}</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p><strong>Friends:</strong> {{ profile.friends|default('N/A') }}</p>
+                                                    <p><strong>Videos:</strong> {{ profile.video_count|default('N/A') }}</p>
+                                                    <p><strong>Email:</strong> <span class="email">{{ profile.email|default('None') }}</span></p>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <p><strong>Bio:</strong></p>
+                                                <div class="bio-text border rounded p-2">{{ profile.bio|default('No bio available')|nl2br }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info">No profiles found for this topic.</div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <!-- Back Button -->
+            <div class="d-grid gap-2 mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Back to Parser</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

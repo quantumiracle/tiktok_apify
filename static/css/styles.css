@@ -1,0 +1,104 @@
+/* TikTok Parser Web Interface Styles */
+
+/* General Styles */
+body {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background-color: #f8f9fa;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.results-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.flash-messages {
+    margin-bottom: 1.5rem;
+}
+
+/* Card Styles */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* Profile Card Styles */
+.profile-card {
+    margin-bottom: 1rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.profile-card:hover {
+    transform: translateY(-5px);
+}
+
+.topic-section {
+    margin-bottom: 2rem;
+}
+
+.bio-text {
+    white-space: pre-wrap;
+    max-height: 100px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-radius: 0.25rem;
+}
+
+.email {
+    font-weight: bold;
+    color: #0d6efd;
+}
+
+/* Button Styles */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5c636a;
+    border-color: #565e64;
+}
+
+/* Form Styles */
+.form-control:focus, .form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Loading Indicator */
+.loading {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading-spinner {
+    width: 3rem;
+    height: 3rem;
+}
