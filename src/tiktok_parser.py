@@ -94,12 +94,13 @@ class TikTokParser:
         logger.info(f"Found {len(filtered_profiles)} profiles with email for topic: {topic}")
         return filtered_profiles
         
-    def parse_topics(self, topics: List[str]) -> Dict[str, List[Dict[str, Any]]]:
+    def parse_topics(self, topics: List[str], progress_callback=None) -> Dict[str, List[Dict[str, Any]]]:
         """
         Parses multiple topics to find influencers with email addresses.
         
         Args:
             topics (List[str]): List of topics (hashtags) to search for.
+            progress_callback: Optional callback function to report progress.
             
         Returns:
             Dict[str, List[Dict[str, Any]]]: Dictionary mapping topics to lists of influencer data.
@@ -107,7 +108,12 @@ class TikTokParser:
         results = {}
         all_profiles = []
         
-        for topic in topics:
+        for i, topic in enumerate(topics):
+            # Report progress if callback provided
+            if progress_callback:
+                progress = i / len(topics)
+                progress_callback(progress)
+                
             topic_profiles = self.parse_topic(topic)
             results[topic] = topic_profiles
             all_profiles.extend(topic_profiles)
@@ -120,6 +126,10 @@ class TikTokParser:
                     output_format=self.output_format
                 )
                 
+        # Report completion if callback provided
+        if progress_callback:
+            progress_callback(1.0)
+                
         # Export combined results
         if all_profiles:
             self.data_exporter.export_data(
@@ -130,12 +140,13 @@ class TikTokParser:
             
         return results
         
-    def run(self, topics: List[str]) -> Dict[str, List[Dict[str, Any]]]:
+    def run(self, topics: List[str], progress_callback=None) -> Dict[str, List[Dict[str, Any]]]:
         """
         Main entry point to run the parser with the given topics.
         
         Args:
             topics (List[str]): List of topics (hashtags) to search for.
+            progress_callback: Optional callback function to report progress.
             
         Returns:
             Dict[str, List[Dict[str, Any]]]: Dictionary mapping topics to lists of influencer data.
@@ -147,7 +158,7 @@ class TikTokParser:
         logger.info(f"Starting TikTok parser with topics: {topics}")
         
         try:
-            results = self.parse_topics(topics)
+            results = self.parse_topics(topics, progress_callback)
             
             # Log summary
             total_profiles = sum(len(profiles) for profiles in results.values())
